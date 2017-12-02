@@ -1,0 +1,131 @@
+<html>
+<head>
+<style>
+span {
+    display: inline-block;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+<table>
+<tbody id="tbody">
+ <tr><td>Angle</td><td>Luminence</td><td align="center">Low Sat --- High Sat</td></tr>
+</tbody>
+</table>
+<div id="divs">
+</div>
+</body>
+<script src="convert.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle
+// https://github.com/brene/adaptive-gradient/blob/master/index.js/
+
+var angle = 0;
+var y = 0;
+var ranges = [];
+for(var angle=0; angle<360; angle=angle+10) {
+  if ( angle == 0 || angle == 120 || (angle >= 230  && angle <= 260) ) continue;
+  console.log('angle='+angle);
+  for (var l = 0; l <= 100; l=l+10){
+    var found = false;
+    var small = -1;
+    var large = -1;
+    for (var s = 50; s <= 100; s=s+10){
+      var rgb = HSLtoRGB(angle/360.0, s/100.0, l/100.0);
+      // console.log(angle, s, l);
+      var brightness = Math.sqrt(Math.pow(rgb[0], 2) * .299 + Math.pow(rgb[1], 2) * .587 + Math.pow(rgb[2], 2) * .114);
+      // console.log(rgb, brightness);
+      if ( brightness < 40 || brightness > 80 ) continue;
+
+      var hsl = 'hsl('+angle+', '+s+'%,'+l+'%)';
+      console.log(hsl);
+      found = true;
+      if ( small == -1 || s < small ) small = s;
+      if ( large == -1 || s > large ) large = s;
+    }
+  if ( found ) console.log(angle, large, small);
+  if ( large > small+20 ) {
+    console.log('range', angle, l, small, large);
+    ranges.push([angle, l, small, large]);
+    var txt = '<tr><td>'+angle+'</td><td>'+l+'</td><td align="center">'+small+' ';
+    for(sat=small; sat <= large; sat=sat+10) {
+      var hsl = 'hsl('+angle+', '+sat+'%,'+l+'%)';
+        var txt = txt + '<span style="display: inline-block; width: 2.0rem; min-width: 3.0rem; background-color:' + hsl + '; color: white;">X</span>';
+    }
+    var txt = txt + ' ' + large + '</td></tr>';
+    $('#tbody').append(txt);
+    
+    console.log(txt);
+  }
+  }
+  y = y + 20;
+}
+
+console.log(ranges);
+
+var values = [0x54b4eb, 0x2fa4e7, 0x1d9ce5, 0x178acc];
+for(var i=0; i<4; i++) {
+    var hx = values[i];
+    var r = (hx >> 16) & 255;
+    var g = (hx >> 8) & 255;
+    var b = hx & 255;
+    var hsl = RGBtoHSL(r,b,g);
+    console.log(hx.toString(16),r,g,b,hsl);
+}
+
+// Change in lightness base, base+4, base+8, base+16
+
+function getHex(angle, base, light) {
+    var rgb = HSLtoRGB(angle/360,base/100,light/100);
+    var big = Math.floor((rgb[0] << 16) + (rgb[1] << 8) + rgb[2]);
+    var hexno = big.toString(16);
+    if ( hexno.length < 6 ) hexno = '0' + hexno;
+    return hexno;
+}
+
+var grads = [];
+for(var i=0; i<ranges.length; i++) {
+    var range = ranges[i];
+    // console.log('range',range);
+    var angle = range[0];
+    var light = range[1];
+    var satlow = range[2];
+    var sathigh = range[3];
+    for ( var base=satlow; (base+30)<sathigh; base=base+10 ) {
+        var hilight = light+16;
+        if ( hilight > 100 ) hilight=100;
+        grads.push([getHex(angle, base, light), getHex(angle, base-8, light),
+            getHex(angle, base-12, light), getHex(angle, base+16, hilight)]);
+    }
+}
+console.log('grads',grads);
+
+for(var i=0; i<grads.length; i++) {
+    var grad = grads[i];
+    var txt = '<p style="height:45px; ' +
+        'background-image:linear-gradient(#'+grad[0]+',#'+grad[1]+',#'+grad[2]+');' +
+        'background-color:\n#'+grad[3]+';' +
+        'border-bottom:1px\nsolid\n#'+grad[3]+';\ncolor:white;">' + 
+        
+        '<span height="100%">Gradient '+i+'</span> ' +
+        '<span height="100%">background-image:linear-gradient(#'+grad[0]+',#'+grad[1]+',#'+grad[2]+');</span> ' +
+        '<span>border-bottom:1px solid #'+grad[3]+';</span> '  + 
+        '<span height="100%" style="background-color: #'+grad[3]+';">background-color: #'+grad[3]+';</span>' +
+        '</p><hr/>';
+    $('#divs').append(txt);
+}
+</script>
+<pre id="pretag">
+$grads = array(
+</pre>
+<script>
+for(var i=0; i<grads.length; i++) {
+    var grad = grads[i];
+    txt = '    array("#'+grad[0]+'","#'+grad[1]+'","#'+grad[2]+'","#'+grad[3]+'"),\n';
+    $('#pretag').append(txt);
+}
+$('#pretag').append(');\n');
+</script>
