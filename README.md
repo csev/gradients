@@ -28,7 +28,7 @@ the colrs to RGB ane ended up with a bunch of numbers like:
 These look kind of random but within the HSL color space they are a straight line and very close
 together.  The last number is a bit further along that hue line as it is supposed to be contrasting.
 
-I found 53 gradients that my "code" liked.
+I found 53 gradients that my code "liked".
 
 ![Gradients](https://github.com/csev/gradients/raw/master/pretty.png)
 
