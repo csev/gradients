@@ -11,7 +11,8 @@ I was inspired by this blog post:
 
 https://medium.com/the-mvp/finally-a-definitive-way-to-make-gradients-beautiful-6b27af88f5f
 
-What I loved was the notion of "perceived brightness".
+What I loved was the notion of "perceived brightness" - I was also fascinated with the HSL color space.
+So I decided to write a program to wander through HSL space and look for pretty ranges.
 
 The basic algorithm loops through HSL (Hue, Saturation, and Lightness) color wheel one degree
 at a time.  For each hue it works through every combination of Saturation and Lightness 
