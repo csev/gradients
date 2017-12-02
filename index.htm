@@ -4,15 +4,22 @@
 span {
     display: inline-block;
     height: 100%;
+    margin: 2px 2px 2px 2px;
 }
 </style>
 </head>
 <body>
-<table>
+<p>Scanning the HSL color space for dark but not too dark colors</p>
+<table border="1">
 <tbody id="tbody">
- <tr><td>Angle</td><td>Luminence</td><td align="center">Low Sat --- High Sat</td></tr>
+<tr><td>Hue</td>
+<td align="center">Low Saturation --- High Saturation</td>
+<td>Lightness</td>
+</tr>
 </tbody>
 </table>
+</hr/>
+<p>Resulting gradients, border, and highlight color:</p>
 <div id="divs">
 </div>
 </body>
@@ -20,7 +27,6 @@ span {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
 
-// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle
 // https://github.com/brene/adaptive-gradient/blob/master/index.js/
 
 var angle = 0;
@@ -50,12 +56,15 @@ for(var angle=0; angle<360; angle=angle+10) {
   if ( large > small+20 ) {
     console.log('range', angle, l, small, large);
     ranges.push([angle, l, small, large]);
-    var txt = '<tr><td>'+angle+'</td><td>'+l+'</td><td align="center">'+small+' ';
+    var txt = '<tr><td>'+angle+'</td>';
+    txt = txt + '<td align="center">'+small+' ';
     for(sat=small; sat <= large; sat=sat+10) {
       var hsl = 'hsl('+angle+', '+sat+'%,'+l+'%)';
-        var txt = txt + '<span style="display: inline-block; width: 2.0rem; min-width: 3.0rem; background-color:' + hsl + '; color: white;">X</span>';
+      txt = txt + '<span style="display: inline-block; width: 2.0rem; min-width: 3.0rem; background-color:' + hsl + '; color: white;">X</span>';
     }
-    var txt = txt + ' ' + large + '</td></tr>';
+    txt = txt + ' ' + large + '</td>';
+    txt = txt + '<td>'+l+'</td>';
+    txt = txt + '</tr>';
     $('#tbody').append(txt);
     
     console.log(txt);
@@ -105,16 +114,14 @@ console.log('grads',grads);
 
 for(var i=0; i<grads.length; i++) {
     var grad = grads[i];
-    var txt = '<p style="height:45px; ' +
+    var txt = '<span style="height: 1.0rem; padding: 5px; ' +
         'background-image:linear-gradient(#'+grad[0]+',#'+grad[1]+',#'+grad[2]+');' +
         'background-color:\n#'+grad[3]+';' +
         'border-bottom:1px\nsolid\n#'+grad[3]+';\ncolor:white;">' + 
         
-        '<span height="100%">Gradient '+i+'</span> ' +
-        '<span height="100%">background-image:linear-gradient(#'+grad[0]+',#'+grad[1]+',#'+grad[2]+');</span> ' +
-        '<span>border-bottom:1px solid #'+grad[3]+';</span> '  + 
-        '<span height="100%" style="background-color: #'+grad[3]+';">background-color: #'+grad[3]+';</span>' +
-        '</p><hr/>';
+        '<span height="100%">Gradient</span> ' +
+        '<span height="100%" style="background-color: #'+grad[3]+';">'+i+';</span>' +
+        '</span> | ';
     $('#divs').append(txt);
 }
 </script>
