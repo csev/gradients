@@ -29,7 +29,7 @@ together.
 
 I found 52 gradients that my "code" liked.
 
-[Gradienes](pretty.png)
+![Gradients](https://github.com/csev/gradients/raw/master/pretty.png)
 
 To run this check it out and open index.htm in a browser.
 
